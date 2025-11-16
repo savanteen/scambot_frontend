@@ -52,7 +52,7 @@ const Leaderboard = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/chatbot/reset-leaderboard', {
+      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,3 +141,4 @@ const Leaderboard = () => {
 
 
 export default Leaderboard;
+
