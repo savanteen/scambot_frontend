@@ -185,9 +185,10 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
     return 98 + finalQuestionsCorrect;
   };
 
-  const submitToLeaderboard = async (score, analyticsData, reason) => {
+ const submitToLeaderboard = async (score, analyticsData, reason) => {
   try {
     const completionTime = analyticsData.endTime - analyticsData.startTime;
+
     const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -201,28 +202,6 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
         gameResult: reason
       })
     });
-
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("Leaderboard submission success:", data);
-  } catch (err) {
-    console.error("Leaderboard submission failed:", err);
-  }
-};
-
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("Leaderboard submission success:", data);
-  } catch (err) {
-    console.error("Leaderboard submission failed:", err);
-  }
-};
 
     if (!response.ok) {
       throw new Error(`Server returned ${response.status}`);
