@@ -25,10 +25,11 @@ const Registration = ({ onRegister }) => {
     setError('');
     
     try {
-const response = await axios.post('https://scamboteducationplatform-production-c988.up.railway.app/api/users/register', {
-        email,
-        gameName
-      });
+const API_URL = 'https://scamboteducationplatform-production-c988.up.railway.app';
+const response = await axios.post(`${API_URL}/api/users/register`, {
+  email,
+  gameName
+});
       
       // Pass complete user object to parent
       onRegister({
@@ -130,4 +131,5 @@ const response = await axios.post('https://scamboteducationplatform-production-c
 
 
 export default Registration;
+
 
