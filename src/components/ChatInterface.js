@@ -186,33 +186,33 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   };
 
   const submitToLeaderboard = async (score, analyticsData, reason) => {
-    try {
-      const completionTime = analyticsData.endTime - analyticsData.startTime;
+  try {
+    const completionTime = analyticsData.endTime - analyticsData.startTime;
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/chatbot/leaderboard`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: userObj?.userId || userId,
-          email: userEmail,
-          gameName: userId,
-          score,
-          completionTime,
-          dimensions,
-          gameResult: reason
-        })
-      });
+    const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: userObj?.userId || userId,
+        email: userEmail,
+        gameName: userId,
+        score,
+        completionTime,
+        dimensions,
+        gameResult: reason
+      })
+    });
 
-      if (!response.ok) {
-        throw new Error(`Server returned ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Leaderboard submission success:", data);
-    } catch (err) {
-      console.error("Leaderboard submission failed:", err);
+    if (!response.ok) {
+      throw new Error(`Server returned ${response.status}`);
     }
-  };
+
+    const data = await response.json();
+    console.log("Leaderboard submission success:", data);
+  } catch (err) {
+    console.error("Leaderboard submission failed:", err);
+  }
+};
 
   const handleGameOver = async (message, reason, overrideScore = null) => {
     let finalMessage = message;
