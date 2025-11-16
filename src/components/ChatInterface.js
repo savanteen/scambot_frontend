@@ -214,6 +214,17 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   }
 };
 
+    if (!response.ok) {
+      throw new Error(`Server returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Leaderboard submission success:", data);
+  } catch (err) {
+    console.error("Leaderboard submission failed:", err);
+  }
+};
+
   const handleGameOver = async (message, reason, overrideScore = null) => {
     let finalMessage = message;
 
