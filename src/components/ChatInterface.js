@@ -250,7 +250,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   const startGame = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/start', {`, {
+      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId }),
@@ -476,7 +476,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
     try {
       const passcode = "resetNYJC";
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard`, {
+      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ passcode }),
