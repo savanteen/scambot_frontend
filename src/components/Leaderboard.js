@@ -7,22 +7,14 @@ const Leaderboard = () => {
 
   // Fetch leaderboard data
   const fetchLeaderboard = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/chatbot/leaderboard?t=${Date.now()}`);
-      if (response.ok) {
-        const data = await response.json();
-        setLeaderboardData(data);
-        setLastFetch(Date.now());
-      } else {
-        console.error('Failed to fetch leaderboard');
-      }
-    } catch (error) {
-      console.error('Error fetching leaderboard:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard');
+    const data = await response.json();
+    setLeaderboardData(data);
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+  }
+};
 
   // Initial fetch
   useEffect(() => {
@@ -146,5 +138,6 @@ const Leaderboard = () => {
     </div>
   );
 };
+
 
 export default Leaderboard;
