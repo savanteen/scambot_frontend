@@ -473,26 +473,26 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   };
   
   const resetLeaderboard = async () => {
-    try {
-      const passcode = "resetNYJC";
-      
-      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ passcode }),
-      });
-      
-      if (response.ok) {
-        alert('Leaderboard reset successfully!');
-        window.location.reload();
-      } else {
-        alert('Failed to reset leaderboard. Invalid passcode.');
-      }
-    } catch (error) {
-      console.error('Error resetting leaderboard:', error);
-      alert('Error resetting leaderboard: ' + error.message);
+  try {
+    const passcode = "resetNYJC";
+    
+    const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ passcode }),
+    });
+    
+    if (response.ok) {
+      alert('Leaderboard reset successfully!');
+      window.location.reload();
+    } else {
+      alert('Failed to reset leaderboard. Invalid passcode.');
     }
-  };
+  } catch (error) {
+    console.error('Error resetting leaderboard:', error);
+    alert('Error resetting leaderboard: ' + error.message);
+  }
+};
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
