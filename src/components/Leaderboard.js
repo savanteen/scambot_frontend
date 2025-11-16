@@ -4,7 +4,15 @@ const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState(Date.now());
-
+const maskEmail = (email) => {
+  if (!email || email.length < 3) return email;
+  const [name, domain] = email.split('@');
+  if (name.length <= 2) {
+    return email; // Don't mask very short names
+  }
+  const maskedName = name.substring(0, 2) + '*'.repeat(name.length - 2);
+  return `${maskedName}@${domain}`;
+};
   // Fetch leaderboard data
   const fetchLeaderboard = async () => {
   try {
@@ -116,7 +124,7 @@ const Leaderboard = () => {
                       ({entry.totalAttempts})
                     </span>
                   </td>
-                  <td className="py-2 px-3 text-gray-600 text-xs">{entry.email}</td>
+                  <td className="py-2 px-3 text-gray-600 text-xs">{maskEmail(entry.email)}</td>
                   <td className="py-2 px-3 text-right font-semibold">{entry.score.toFixed(2)}</td>
                   <td className="py-2 px-3 text-right">{formatTime(entry.completionTime)}</td>
                 </tr>
@@ -141,4 +149,5 @@ const Leaderboard = () => {
 
 
 export default Leaderboard;
+
 
