@@ -476,7 +476,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
     try {
       const passcode = "resetNYJC";
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ passcode }),
