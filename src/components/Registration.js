@@ -25,7 +25,7 @@ const Registration = ({ onRegister }) => {
     setError('');
     
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/register`, {
+const response = await axios.post('https://scamboteducationplatform-production-c988.up.railway.app/api/users/register', {
         email,
         gameName
       });
@@ -130,3 +130,4 @@ const Registration = ({ onRegister }) => {
 
 
 export default Registration;
+
