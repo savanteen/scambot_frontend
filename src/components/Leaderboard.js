@@ -60,13 +60,11 @@ const maskEmail = (email) => {
     }
 
     try {
-      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ passcode: password })
-      });
+        const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ passcode: password })
+});
 
       if (response.ok) {
         alert('Leaderboard reset successfully!');
@@ -149,5 +147,6 @@ const maskEmail = (email) => {
 
 
 export default Leaderboard;
+
 
 
