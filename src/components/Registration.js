@@ -37,8 +37,11 @@ const Registration = ({ onRegister }) => {
       });
       
     } catch (error) {
+      console.error('Registration error:', error);
       setError(error.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
+
+  // ... rest of your JSX stays the same
