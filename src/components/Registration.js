@@ -8,7 +8,7 @@ const Registration = ({ onRegister }) => {
   const [loading, setLoading] = useState(false);
   const [passkey, setPasskey] = useState('');
   const [passkeyVerified, setPasskeyVerified] = useState(false);
-
+const [showPasskey, setShowPasskey] = useState(false);
   const handlePasskeyVerification = (e) => {
     e.preventDefault();
     if (passkey === 'NYJCnoscam') {
@@ -53,20 +53,29 @@ const Registration = ({ onRegister }) => {
           <p>This is an educational tool to help you understand scam tactics. The knowledge gained should only be used for protection and awareness. Misuse of this information for actual scamming is illegal and unethical.</p>
         </div>
         <form onSubmit={handlePasskeyVerification}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="passkey">
-              Enter Passkey
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="passkey"
-              type="password"
-              placeholder="Enter passkey to continue"
-              value={passkey}
-              onChange={(e) => setPasskey(e.target.value)}
-              required
-            />
-          </div>
+         <div className="mb-4">
+  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="passkey">
+    Enter Passkey
+  </label>
+  <div className="relative">
+    <input
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
+      id="passkey"
+      type={showPasskey ? "text" : "password"}
+      placeholder="Enter passkey to continue"
+      value={passkey}
+      onChange={(e) => setPasskey(e.target.value)}
+      required
+    />
+    <button
+      type="button"
+      className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+      onClick={() => setShowPasskey(!showPasskey)}
+    >
+      {showPasskey ? "Hide" : "Show"}
+    </button>
+  </div>
+</div>
           {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
           <div className="flex items-center justify-center">
             <button
@@ -129,3 +138,4 @@ const Registration = ({ onRegister }) => {
 };
 
 export default Registration;
+
