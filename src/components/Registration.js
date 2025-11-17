@@ -51,7 +51,7 @@ const Registration = ({ onRegister }) => {
         {/* Logo Section */}
         <div className="text-center mb-4">
           <img 
-            src="https://drive.google.com/uc?id=1PfJyhRpQXzhOM_LllgHawIzco0eXFzUZ" 
+            src="https://tembusugames.co/cdn/shop/files/TembusuLogoCentreWords.png?v=1763389811&width=150" 
             alt="Educational Platform Logo" 
             className="w-16 h-16 mx-auto mb-2"
             onError={(e) => {
@@ -111,13 +111,13 @@ const Registration = ({ onRegister }) => {
         {/* Copyright Notice */}
         <div className="mt-6 pt-4 border-t border-gray-200 text-center">
           <p className="text-xs text-gray-500">
-            © 2025 Educational Scambot Platform. All rights reserved.
+            © 2025 Tembusu Games Pte Ltd. All rights reserved.
           </p>
           <p className="text-xs text-gray-400 mt-1">
             Created for educational purposes only
           </p>
           <p className="text-xs text-gray-400 mt-1">
-            Generic illustrations used • No actual scammer depictions
+           
           </p>
         </div>
       </div>
@@ -197,3 +197,4 @@ const Registration = ({ onRegister }) => {
 };
 
 export default Registration;
+
