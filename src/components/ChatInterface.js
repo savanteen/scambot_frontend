@@ -898,13 +898,9 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
                 className="mt-3 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
                 Play Again
-              </button>
-              <button 
-                onClick={resetLeaderboard}
-                className="mt-2 w-full bg-red-600 hover:bg-red-700 text-white py-1 px-4 rounded text-sm"
-              >
-                Reset Leaderboard (Admin)
-              </button>
+    </button>
+    {/* REMOVE THIS ENTIRE BUTTON */}
+  </div>
             </div>
           )}
           
