@@ -43,30 +43,11 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   
   const messagesEndRef = useRef(null);
 
-  // Trivia questions for rapport building
-  const triviaQuestions = [
-    { question: "By the way, which country is famous for sakura blossoms?", answer: "japan", points: 40 },
-    { question: "Do you know which country Blackpink's Lisa is from?", answer: "thailand", points: 40 },
-    { question: "Which country is known for the Eiffel Tower?", answer: "france", points: 40 },
-    { question: "What country is famous for pasta and pizza?", answer: "italy", points: 40 },
-    { question: "Which Asian country is known as the Land of the Rising Sun?", answer: "japan", points: 40 },
-    { question: "What country is home to Big Ben and Buckingham Palace?", answer: "uk,england,britain", points: 40 }
-  ];
-
-  // MRT station questions
-  const mrtQuestions = [
-    { question: "I'm quite an MRT fan! What's the nearest MRT station to the National Gallery?", answer: "city hall", points: 30 },
-    { question: "Do you know the nearest MRT station to the Merlion?", answer: "raffles place", points: 30 },
-    { question: "What's the newest MRT station built in 2025? I haven't been there yet!", answer: "hume", points: 30 },
-    { question: "Which MRT station is closest to Orchard Road shopping?", answer: "orchard", points: 30 },
-    { question: "What's the MRT station near Changi Airport?", answer: "changi airport", points: 30 }
-  ];
-
   // Personal questions for rapport
   const personalQuestions = [
-    { question: "How many children do you have?", trigger: ["0", "none", "1", "2", "3", "one", "two", "three"], points: 30 },
-    { question: "Where are you planning to go for your next vacation?", trigger: "country_mentioned", points: 40 },
-    { question: "What's your name, if you don't mind me asking?", trigger: ["my name is", "i am", "call me"], points: 40 }
+    { question: "How many children do you have?", trigger: ["0", "none", "1", "2", "3", "one", "two", "three"], points: 50 },
+    { question: "Where are you planning to go for your next vacation?", trigger: "country_mentioned", points: 50 },
+    { question: "What's your name, if you don't mind me asking?", trigger: ["my name is", "i am", "call me"], points: 50 }
   ];
 
   const dimensionPatterns = {
@@ -88,10 +69,10 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
                 '% annual', '% yearly', '% per year', 'annual returns', 'yearly returns']
     },
     skepticism_deflected: {
-      positive: ['understand your concern', 'that\'s a legitimate question', 'good point you raise', 
+      positive: ['understand your concern', 'legitimate question', 'good point you raise', 
                 'let me explain why', 'I can prove that', 'here\'s the evidence', 'understand why you ask', 
                 'that\'s a valid question', 'reasonable concern you have', 'let me address that',
-                'dont worry', 'don\'t worry', 'not important', 'no need to worry', 'trust me']
+                'dont worry', 'not important', 'no need to worry', 'trust me']
     },
     urgency_created: {
       positive: ['limited time offer', 'act now', 'today only', 'expires soon', 'deadline approaching', 
@@ -102,7 +83,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
                 'deadline today', 'expires tonight', 'limited spots', 'running out of time']
     },
     info_requested: {
-      positive: ['bank details', 'account number', 'your password', 'personal details', 'social security', 
+      positive: ['bank details', 'account number', 'your password', 'personal details', 
                 'credit card', 'verification code', 'banking information', 'identification documents',
                 'ic number', 'nric', 'passport', 'address', 'phone number', 'email address', 'home address']
     },
@@ -122,40 +103,38 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   const botPersonality = {
     earlyStage: [
       "I'm not familiar with this kind of investment. How did you get my information?",
-      "That sounds unusual. What kind of guarantees are you offering?",
+      "What is the guaranteed rate of return per month or per year on this investment?",
       "I've heard about investment scams. How do I know this is legitimate?",
-      "I need to be careful with my retirement savings. How long has your company been in business?",
-      "By the way, I have two children in college. Do you have any children?",
-      "I've been an accountant for 25 years. What's your professional background?",
-      "I was just about to have lunch. Do you recommend any good restaurants?",
-      "I'm planning a vacation next month. Have you been anywhere nice recently?"
+      "I need to be careful with my retirement savings. Is your company regulated?",
+      "Can I take some time to think about this opportunity? I think I should discuss this with my wife.",
+      "I'm still really uncertain. What if I lose money?",
     ],
     middleStage: [
-      "That's interesting. Can you tell me more about the expected returns?",
+      "That's interesting. Can you tell me more about the returns? Are they guaranteed?",
       "I see. What information would you need from me to get started?",
       "That sounds promising. How quickly would I see returns on my investment?",
       "I'm starting to understand. What makes your company different from others?",
       "You make some good points. How much would I need to invest initially?",
       "My wife and I are saving for retirement. Would this be suitable for us?",
       "I usually consult with my financial advisor. What would you tell him about this?",
-      "I've been burned by investments before. Why is this different?"
+      "Hey wait a second. I just did a search and couldn't find your name. Are you legit?"
     ],
     lateStage: [
-      "That sounds very reassuring. I think I might be interested in investing.",
-      "I'm definitely considering this opportunity. What's the next step?",
+      "That sounds very reassuring. The stock market was up 10% last year. Can this investment outperform that?",
+      "I'm definitely considering this opportunity. What do I have to do?",
       "You've addressed my concerns well. How soon do you need a decision?",
-      "I appreciate your thoroughness. Would $1000 be enough to start with?",
-      "I'm nearly ready to proceed. Can you walk me through the investment process?"
+      "I appreciate your thoroughness. Would $100 be enough to start with?",
+      "I'm nearly ready to proceed. What details do you need from me again?"
     ],
     pressureTactics: [
       "Look, I'm getting late for my appointment. Can you quickly summarize what you're offering me so I can decide?",
       "My bus is here! I really need to go - give me the key details one more time, quickly!",
-      "My wife is calling me - I need to make a decision soon. What are the main points again?",
-      "I have to leave in a few minutes - can you recap the important details so I can decide?",
-      "Sorry, I'm running behind schedule. Help me understand the key benefits quickly!"
+      "My wife is calling me - I need to make a decision soon. There are some things I am still uncertain about, can you answer them?",
+      "I have to leave in a few minutes - can you just address my remaining concerns?",
+      "Sorry, I'm running behind schedule. Help me understand what I else I need to know, quickly!"
     ],
     successResponse: [
-      "Perfect! I'm convinced - you got me! I'll transfer the money right away. 🎉 Robert fell for it! 🎉"
+      "This sounds like an amazing opportunity ! I'll transfer the money right away! 🎉 Robert fell for it! 🎉"
     ],
     failureResponse: [
       "I don't think this is legitimate. I'm going to report this to the authorities.",
