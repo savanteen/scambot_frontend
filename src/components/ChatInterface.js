@@ -35,9 +35,6 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   
   // Track used questions to prevent repeats
   const [usedQuestions, setUsedQuestions] = useState({
-    trivia: [],
-    mrt: [],
-    infoSource: false,
     personalQuestions: []
   });
   
@@ -198,39 +195,6 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
     return false;
   };
 
-  // Function to get trivia question
-  const getTriviaQuestion = () => {
-    const availableQuestions = triviaQuestions.filter((_, index) => !usedQuestions.trivia.includes(index));
-    if (availableQuestions.length === 0) return null;
-    
-    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-    const question = availableQuestions[randomIndex];
-    const originalIndex = triviaQuestions.indexOf(question);
-    
-    setUsedQuestions(prev => ({
-      ...prev,
-      trivia: [...prev.trivia, originalIndex]
-    }));
-    
-    return question.question;
-  };
-
-  // Function to get MRT question
-  const getMRTQuestion = () => {
-    const availableQuestions = mrtQuestions.filter((_, index) => !usedQuestions.mrt.includes(index));
-    if (availableQuestions.length === 0) return null;
-    
-    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-    const question = availableQuestions[randomIndex];
-    const originalIndex = mrtQuestions.indexOf(question);
-    
-    setUsedQuestions(prev => ({
-      ...prev,
-      mrt: [...prev.mrt, originalIndex]
-    }));
-    
-    return question.question;
-  };
 
   // Function to get guiding question for incomplete dimensions
   const getGuidingQuestion = () => {
@@ -354,9 +318,6 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       setAwaitingQuestion1(false);
       setAwaitingQuestion2(false);
       setUsedQuestions({
-        trivia: [],
-        mrt: [],
-        infoSource: false,
         personalQuestions: []
       });
       
