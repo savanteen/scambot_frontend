@@ -17,7 +17,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   });
   const [gameCompleted, setGameCompleted] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(240); // Changed from 180 to 240 (4 minutes)
+  const [timeLeft, setTimeLeft] = useState(240); // 4 minutes
   const [graceMessageCount, setGraceMessageCount] = useState(0);
   const [analytics, setAnalytics] = useState({
     messagesCount: 0,
@@ -33,19 +33,16 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   const [awaitingQuestion1, setAwaitingQuestion1] = useState(false);
   const [awaitingQuestion2, setAwaitingQuestion2] = useState(false);
   
-  // Track used questions to prevent repeats
-  const [usedQuestions, setUsedQuestions] = useState({
-    personalQuestions: []
+  // Track used rapport questions to prevent repeats
+  const [usedRapportQuestions, setUsedRapportQuestions] = useState({
+    children: false,
+    travel: false,
+    soccer: false,
+    politics: false,
+    infoSource: false
   });
   
   const messagesEndRef = useRef(null);
-
-  // Personal questions for rapport
-  const personalQuestions = [
-    { question: "How many children do you have?", trigger: ["0", "none", "1", "2", "3", "one", "two", "three"], points: 50 },
-    { question: "Where are you planning to go for your next vacation?", trigger: "country_mentioned", points: 50 },
-    { question: "What's your name, if you don't mind me asking?", trigger: ["my name is", "i am", "call me"], points: 50 }
-  ];
 
   const dimensionPatterns = {
     rapport_built: {
@@ -69,7 +66,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       positive: ['understand your concern', 'legitimate question', 'good point you raise', 
                 'let me explain why', 'I can prove that', 'here\'s the evidence', 'understand why you ask', 
                 'that\'s a valid question', 'reasonable concern you have', 'let me address that',
-                'dont worry', 'not important', 'no need to worry', 'trust me']
+                'dont worry', 'don\'t worry', 'not important', 'no need to worry', 'trust me']
     },
     urgency_created: {
       positive: ['limited time offer', 'act now', 'today only', 'expires soon', 'deadline approaching', 
@@ -146,6 +143,12 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       "I'm still not sure about [DIMENSION]. What can you say to help me understand?",
       "Before I decide, I need to know more about [DIMENSION]. Can you elaborate?",
       "I have concerns about [DIMENSION]. How would you address that?"
+    ],
+    rapportQuestions: [
+      "How many children do you have?",
+      "What's your favourite country to travel to?",
+      "Do you follow any soccer teams?",
+      "Who's your favourite Singapore politician or political party?"
     ]
   };
 
@@ -174,7 +177,6 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   const checkUnrealisticReturns = (message) => {
     const lowerMessage = message.toLowerCase();
     
-    // Extract numbers followed by % and timeframe indicators
     const monthlyMatch = lowerMessage.match(/(\d+(?:\.\d+)?)%?\s*(?:monthly|per month|every month)/i);
     const annualMatch = lowerMessage.match(/(\d+(?:\.\d+)?)%?\s*(?:annual|yearly|per year|annually)/i);
     
@@ -195,7 +197,6 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
     return false;
   };
 
-
   // Function to get guiding question for incomplete dimensions
   const getGuidingQuestion = () => {
     const incompleteDimensions = Object.entries(dimensions)
@@ -215,10 +216,8 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   
   // SIMPLE SCORING: Base 98%, +1% per question attempt (reduced if wrong)
   const calculateScore = () => {
-    // Base score is always 98% once all dimensions complete
     const allDimensionsComplete = Object.values(dimensions).every(v => v >= 100);
     if (!allDimensionsComplete) {
-      // Normal calculation before final phase
       const rapportScore = (dimensions.rapport_built / 100) * 12;
       const otherDimensions = Object.entries(dimensions)
         .filter(([key]) => key !== 'rapport_built')
@@ -227,38 +226,37 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       return Math.round((rapportScore + otherScore) * 100) / 100;
     }
     
-    // Final phase: 98% + questions attempted
     return 98 + finalQuestionsCorrect;
   };
 
- const submitToLeaderboard = async (score, analyticsData, reason) => {
-  try {
-    const completionTime = analyticsData.endTime - analyticsData.startTime;
+  const submitToLeaderboard = async (score, analyticsData, reason) => {
+    try {
+      const completionTime = analyticsData.endTime - analyticsData.startTime;
 
-    const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: userObj?.userId || userId,
-        email: userEmail,
-        gameName: userId,
-        score,
-        completionTime,
-        dimensions,
-        gameResult: reason
-      })
-    });
+      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: userObj?.userId || userId,
+          email: userEmail,
+          gameName: userId,
+          score,
+          completionTime,
+          dimensions,
+          gameResult: reason
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Leaderboard submission success:", data);
+    } catch (err) {
+      console.error("Leaderboard submission failed:", err);
     }
-
-    const data = await response.json();
-    console.log("Leaderboard submission success:", data);
-  } catch (err) {
-    console.error("Leaderboard submission failed:", err);
-  }
-};
+  };
 
   const handleGameOver = async (message, reason, overrideScore = null) => {
     let finalMessage = message;
@@ -317,8 +315,12 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       setFinalQuestionsCorrect(0);
       setAwaitingQuestion1(false);
       setAwaitingQuestion2(false);
-      setUsedQuestions({
-        personalQuestions: []
+      setUsedRapportQuestions({
+        children: false,
+        travel: false,
+        soccer: false,
+        politics: false,
+        infoSource: false
       });
       
       setDimensions({
@@ -406,16 +408,22 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       }
     }
     
-    // Regular game responses with trivia/MRT questions for rapport building
+    // Regular game responses with simple rapport building questions
     const completeDimensions = Object.values(dimensions).filter(v => v >= 100).length;
     
-    // Add trivia questions for rapport building
+    // Add rapport questions if not at 100%
     if (dimensions.rapport_built < 100 && Math.random() < 0.3) {
-      const triviaQuestion = getTriviaQuestion();
-      if (triviaQuestion) return triviaQuestion;
+      const availableQuestions = [];
       
-      const mrtQuestion = getMRTQuestion();
-      if (mrtQuestion) return mrtQuestion;
+      if (!usedRapportQuestions.children) availableQuestions.push(0);
+      if (!usedRapportQuestions.travel) availableQuestions.push(1);
+      if (!usedRapportQuestions.soccer) availableQuestions.push(2);
+      if (!usedRapportQuestions.politics) availableQuestions.push(3);
+      
+      if (availableQuestions.length > 0) {
+        const randomIndex = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+        return botPersonality.rapportQuestions[randomIndex];
+      }
     }
     
     if (completeDimensions >= 5 || timeLeft <= 30) {
@@ -458,42 +466,50 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       dimensionUpdated = true;
     }
 
-    // Check trivia answers for rapport
+    // Process rapport building with simple keywords
     if (newDimensions.rapport_built < 100) {
-      // How are you response
-      if (lowerCaseMessage.includes('how are you')) {
-        newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + 40);
+      // Greetings - can be used multiple times
+      if (lowerCaseMessage.includes('how are you') || lowerCaseMessage.includes('and you')) {
+        newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + 100);
         dimensionUpdated = true;
       }
       
-      // Check trivia answers
-      for (const trivia of triviaQuestions) {
-        const answers = trivia.answer.split(',');
-        if (answers.some(answer => lowerCaseMessage.includes(answer.trim()))) {
-          newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + trivia.points);
-          dimensionUpdated = true;
-          break;
-        }
+      // Name introduction - 100% boost
+      if (lowerCaseMessage.includes('my name is') || lowerCaseMessage.includes('i am') || lowerCaseMessage.includes('call me')) {
+        newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + 100);
+        dimensionUpdated = true;
       }
       
-      // Check MRT answers
-      for (const mrt of mrtQuestions) {
-        if (lowerCaseMessage.includes(mrt.answer)) {
-          newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + mrt.points);
-          dimensionUpdated = true;
-          break;
-        }
+      // Children - 50% boost, one time only
+      const childKeywords = ['0 children', 'no children', '1 child', '2 children', '3 children', 'one child', 'two children', 'three children', 'no kids', '1 kid', '2 kids', '3 kids'];
+      if (!usedRapportQuestions.children && childKeywords.some(keyword => lowerCaseMessage.includes(keyword))) {
+        newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + 50);
+        setUsedRapportQuestions(prev => ({ ...prev, children: true }));
+        dimensionUpdated = true;
       }
       
-      // Check personal question triggers
-      for (const personal of personalQuestions) {
-        if (Array.isArray(personal.trigger)) {
-          if (personal.trigger.some(trigger => lowerCaseMessage.includes(trigger))) {
-            newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + personal.points);
-            dimensionUpdated = true;
-            break;
-          }
-        }
+      // Travel countries - 50% boost, one time only
+      const countryKeywords = ['japan', 'korea', 'thailand', 'vietnam', 'indonesia', 'malaysia', 'china', 'india', 'australia', 'uk', 'usa', 'europe', 'france', 'italy', 'spain', 'germany'];
+      if (!usedRapportQuestions.travel && countryKeywords.some(keyword => lowerCaseMessage.includes(keyword))) {
+        newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + 50);
+        setUsedRapportQuestions(prev => ({ ...prev, travel: true }));
+        dimensionUpdated = true;
+      }
+      
+      // Soccer teams - 50% boost, one time only
+      const soccerKeywords = ['manchester united', 'arsenal', 'chelsea', 'liverpool', 'tottenham', 'manchester city', 'real madrid', 'barcelona', 'not a fan', 'dont like soccer', 'not into soccer', 'dont follow soccer'];
+      if (!usedRapportQuestions.soccer && soccerKeywords.some(keyword => lowerCaseMessage.includes(keyword))) {
+        newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + 50);
+        setUsedRapportQuestions(prev => ({ ...prev, soccer: true }));
+        dimensionUpdated = true;
+      }
+      
+      // Politics - 50% boost, one time only
+      const politicsKeywords = ['lawrence wong', 'chan chun sing', 'gan kim yong', 'pap', 'workers party', 'psp', 'pritam singh', 'peoples action party', 'progress singapore party'];
+      if (!usedRapportQuestions.politics && politicsKeywords.some(keyword => lowerCaseMessage.includes(keyword))) {
+        newDimensions.rapport_built = Math.min(100, newDimensions.rapport_built + 50);
+        setUsedRapportQuestions(prev => ({ ...prev, politics: true }));
+        dimensionUpdated = true;
       }
     }
 
@@ -504,23 +520,19 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       for (const pattern of dimensionPatterns[dimension].positive) {
         if (lowerCaseMessage.includes(pattern)) {
           if (dimension === 'trust_built' && ['facebook', 'social media', 'database', 'friend', 'ads', 'advertisement', 'linkedin', 'referral'].includes(pattern)) {
-            if (!usedQuestions.infoSource) {
+            if (!usedRapportQuestions.infoSource) {
               newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 50);
-              setUsedQuestions(prev => ({ ...prev, infoSource: true }));
+              setUsedRapportQuestions(prev => ({ ...prev, infoSource: true }));
               dimensionUpdated = true;
             }
           } else if (dimension === 'skepticism_deflected') {
-            if (['dont worry', 'don\'t worry', 'not important', 'no need to worry', 'trust me'].includes(pattern)) {
-              newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 50);
-            } else {
-              newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 50); // Nerfed from 100
-            }
+            newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 50);
             dimensionUpdated = true;
           } else if (dimension === 'info_requested') {
             if (['nric', 'email address', 'home address'].includes(pattern)) {
               newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 40);
             } else if (pattern === 'bank details' || pattern === 'account number') {
-              newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 40); // Reduced from 100
+              newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 40);
             } else {
               newDimensions[dimension] = Math.min(100, newDimensions[dimension] + 40);
             }
@@ -602,28 +614,6 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
   
   const calculateProgress = (dimension) => {
     return dimensions[dimension] || 0;
-  };
-  
-  const resetLeaderboard = async () => {
-    try {
-      const passcode = "resetNYJC";
-      
-      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ passcode }),
-      });
-      
-      if (response.ok) {
-        alert('Leaderboard reset successfully!');
-        window.location.reload();
-      } else {
-        alert('Failed to reset leaderboard. Invalid passcode.');
-      }
-    } catch (error) {
-      console.error('Error resetting leaderboard:', error);
-      alert('Error resetting leaderboard: ' + error.message);
-    }
   };
 
   return (
@@ -713,7 +703,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
               <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-700">
                 <h4 className="font-bold mb-1">Strategy Hints:</h4>
                 <ul className="list-disc pl-4 space-y-1">
-                  <li>Build rapport first (ask about family)</li>
+                  <li>Build rapport first (ask about family/interests)</li>
                   <li>Build trust with credentials</li>
                   <li>Deflect skepticism by addressing concerns</li>
                   <li>Create urgency with limited-time offers</li>
@@ -826,27 +816,27 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
             </div>
           </div>
           
-         {gameCompleted && (
-  <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded-lg">
-    <h4 className="font-bold mb-2">Game Completed!</h4>
-    <p>Final Score: {finalScore}%</p>
-    {finalScore === 100 && (
-      <p className="text-green-600 font-bold">🎉 Robert fell for it! 🎉</p>
-    )}
-    <button 
-      onClick={startGame} 
-      className="mt-3 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    >
-      Play Again
-    </button>
-  </div>
-)}
+          {gameCompleted && (
+            <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded-lg">
+              <h4 className="font-bold mb-2">Game Completed!</h4>
+              <p>Final Score: {finalScore}%</p>
+              {finalScore === 100 && (
+                <p className="text-green-600 font-bold">🎉 Robert fell for it! 🎉</p>
+              )}
+              <button 
+                onClick={startGame} 
+                className="mt-3 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Play Again
+              </button>
+            </div>
+          )}
           
           {gameStarted && !gameCompleted && (
             <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-700">
               <h4 className="font-bold mb-1">Strategy Hints:</h4>
               <ul className="list-disc pl-4 space-y-1">
-                <li>Build rapport first (ask about family)</li>
+                <li>Build rapport first (ask about family/interests)</li>
                 <li>Build trust with credentials</li>
                 <li>Deflect skepticism by addressing concerns</li>
                 <li>Create urgency with limited-time offers</li>
