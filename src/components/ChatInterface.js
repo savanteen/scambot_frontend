@@ -148,10 +148,10 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       "I have concerns about [DIMENSION]. How would you address that?"
     ],
     rapportQuestions: [
-      "How many children do you have?",
-      "What's your favourite country to travel to?",
-      "Do you follow any soccer teams?",
-      "Who's your favourite Singapore politician or political party?"
+      "So, do you have any kids? I’ve always found family stories pretty interesting.",
+      "I’m curious, is there a country you’ve really enjoyed visiting lately? I been to one recently and wonder if we have the same taste in travel!",
+      "By the way, do you follow any soccer teams? It’s always fun to chat about the latest matches",
+      "Just wondering, do you have a favorite Singapore political party? Are you a hammer or a lightning bolt?"
     ]
   };
 
