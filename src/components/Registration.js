@@ -48,16 +48,28 @@ const Registration = ({ onRegister }) => {
   if (!passkeyVerified) {
     return (
       <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        {/* Logo Section */}
+        {/* Logo and Educational Image Section */}
         <div className="text-center mb-4">
+          {/* Tembusu Games Logo */}
           <img 
             src="https://tembusugames.co/cdn/shop/files/TembusuLogoCentreWords.png?v=1763389811&width=150" 
-            alt="Educational Platform Logo" 
-            className="w-16 h-16 mx-auto mb-2"
+            alt="Tembusu Games" 
+            className="w-20 h-12 mx-auto mb-3 object-contain"
             onError={(e) => {
               e.target.style.display = 'none';
             }}
           />
+          
+          {/* Educational Scammer vs Victim Image */}
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0725/5402/0887/files/scamvsvictim.png?v=1763391088" 
+            alt="Scammer vs Victim Educational Simulation" 
+            className="w-32 h-20 mx-auto mb-2 object-contain"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+          
           <div className="text-center text-xs text-gray-500 mb-2">
             🤖 AI-powered educational simulation
           </div>
@@ -116,9 +128,6 @@ const Registration = ({ onRegister }) => {
           <p className="text-xs text-gray-400 mt-1">
             Created for educational purposes only
           </p>
-          <p className="text-xs text-gray-400 mt-1">
-           
-          </p>
         </div>
       </div>
     );
@@ -126,16 +135,28 @@ const Registration = ({ onRegister }) => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      {/* Logo Section */}
+      {/* Logo and Educational Image Section */}
       <div className="text-center mb-4">
+        {/* Tembusu Games Logo */}
         <img 
-          src="https://drive.google.com/uc?id=1PfJyhRpQXzhOM_LllgHawIzco0eXFzUZ" 
-          alt="Educational Platform Logo" 
-          className="w-16 h-16 mx-auto mb-2"
+          src="https://tembusugames.co/cdn/shop/files/TembusuLogoCentreWords.png?v=1763389811&width=150" 
+          alt="Tembusu Games" 
+          className="w-20 h-12 mx-auto mb-3 object-contain"
           onError={(e) => {
             e.target.style.display = 'none';
           }}
         />
+        
+        {/* Educational Scammer vs Victim Image */}
+        <img 
+          src="https://cdn.shopify.com/s/files/1/0725/5402/0887/files/scamvsvictim.png?v=1763391088" 
+          alt="Scammer vs Victim Educational Simulation" 
+          className="w-32 h-20 mx-auto mb-2 object-contain"
+          onError={(e) => {
+            e.target.style.display = 'none';
+          }}
+        />
+        
         <div className="text-center text-xs text-gray-500 mb-2">
           🤖 AI-powered educational simulation
         </div>
@@ -186,7 +207,7 @@ const Registration = ({ onRegister }) => {
       {/* Copyright Notice */}
       <div className="mt-6 pt-4 border-t border-gray-200 text-center">
         <p className="text-xs text-gray-500">
-          © 2025 Educational Scambot Platform. All rights reserved.
+          © 2025 Tembusu Games Pte Ltd. All rights reserved.
         </p>
         <p className="text-xs text-gray-400 mt-1">
           Created for educational purposes only
@@ -197,4 +218,3 @@ const Registration = ({ onRegister }) => {
 };
 
 export default Registration;
-
