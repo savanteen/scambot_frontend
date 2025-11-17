@@ -64,7 +64,7 @@ const Registration = ({ onRegister }) => {
           <img 
             src="https://cdn.shopify.com/s/files/1/0725/5402/0887/files/scamvsvictim.png?v=1763391088" 
             alt="Scammer vs Victim Educational Simulation" 
-            className="w-full h-24 mb-2 object-cover rounded"
+            className="w-full h-32 mb-2 object-cover rounded"
             onError={(e) => {
               e.target.style.display = 'none';
             }}
@@ -211,3 +211,4 @@ const Registration = ({ onRegister }) => {
 };
 
 export default Registration;
+
