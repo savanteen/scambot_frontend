@@ -47,32 +47,33 @@ const Registration = ({ onRegister }) => {
 
   if (!passkeyVerified) {
     return (
-      {/* Logo and Educational Image Section */}
-<div className="text-center mb-4">
-  {/* Tembusu Games Logo */}
-  <img 
-    src="https://tembusugames.co/cdn/shop/files/TembusuLogoCentreWords.png?v=1763389811&width=150" 
-    alt="Tembusu Games" 
-    className="w-20 h-12 mx-auto mb-3 object-contain"
-    onError={(e) => {
-      e.target.style.display = 'none';
-    }}
-  />
-  
-  {/* Educational Scammer vs Victim Image - Full Width */}
-  <img 
-    src="https://cdn.shopify.com/s/files/1/0725/5402/0887/files/scamvsvictim.png?v=1763391088" 
-    alt="Scammer vs Victim Educational Simulation" 
-    className="w-full h-24 mb-2 object-cover rounded"
-    onError={(e) => {
-      e.target.style.display = 'none';
-    }}
-  />
-  
-  <div className="text-center text-xs text-gray-400 mb-2">
-    Role-play as a scammer to scam a victim in this immersive finlit game!
-  </div>
-</div>
+      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+        {/* Logo and Educational Image Section */}
+        <div className="text-center mb-4">
+          {/* Tembusu Games Logo */}
+          <img 
+            src="https://tembusugames.co/cdn/shop/files/TembusuLogoCentreWords.png?v=1763389811&width=150" 
+            alt="Tembusu Games" 
+            className="w-20 h-12 mx-auto mb-3 object-contain"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+          
+          {/* Educational Scammer vs Victim Image - Full Width */}
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0725/5402/0887/files/scamvsvictim.png?v=1763391088" 
+            alt="Scammer vs Victim Educational Simulation" 
+            className="w-full h-24 mb-2 object-cover rounded"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+          
+          <div className="text-center text-xs text-gray-400 mb-2">
+            Role-play as a scammer to scam a victim in this immersive finlit game!
+          </div>
+        </div>
 
         <h2 className="text-2xl font-bold mb-4 text-center">Educational Scambot Simulation</h2>
         
@@ -143,19 +144,15 @@ const Registration = ({ onRegister }) => {
           }}
         />
         
-        {/* Educational Scammer vs Victim Image */}
+        {/* Educational Scammer vs Victim Image - Full Width */}
         <img 
           src="https://cdn.shopify.com/s/files/1/0725/5402/0887/files/scamvsvictim.png?v=1763391088" 
           alt="Scammer vs Victim Educational Simulation" 
-          className="w-32 h-20 mx-auto mb-2 object-contain"
+          className="w-full h-24 mb-2 object-cover rounded"
           onError={(e) => {
             e.target.style.display = 'none';
           }}
         />
-        
-        <div className="text-center text-xs text-gray-500 mb-2">
-          🤖 AI-powered educational simulation
-        </div>
       </div>
 
       <h2 className="text-2xl font-bold mb-4 text-center">Register for the Scam Challenge</h2>
@@ -214,4 +211,3 @@ const Registration = ({ onRegister }) => {
 };
 
 export default Registration;
-
