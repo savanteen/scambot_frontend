@@ -865,23 +865,21 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
             </div>
           </div>
           
-          {gameCompleted && (
-            <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded-lg">
-              <h4 className="font-bold mb-2">Game Completed!</h4>
-              <p>Final Score: {finalScore}%</p>
-              {finalScore === 100 && (
-                <p className="text-green-600 font-bold">🎉 Robert fell for it! 🎉</p>
-              )}
-              <button 
-                onClick={startGame} 
-                className="mt-3 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Play Again
+         {gameCompleted && (
+  <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded-lg">
+    <h4 className="font-bold mb-2">Game Completed!</h4>
+    <p>Final Score: {finalScore}%</p>
+    {finalScore === 100 && (
+      <p className="text-green-600 font-bold">🎉 Robert fell for it! 🎉</p>
+    )}
+    <button 
+      onClick={startGame} 
+      className="mt-3 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Play Again
     </button>
-    {/* REMOVE THIS ENTIRE BUTTON */}
   </div>
-            </div>
-          )}
+)}
           
           {gameStarted && !gameCompleted && (
             <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-700">
