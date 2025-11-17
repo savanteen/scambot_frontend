@@ -4,25 +4,31 @@ const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState(Date.now());
-const maskEmail = (email) => {
-  if (!email || email.length < 3) return email;
-  const [name, domain] = email.split('@');
-  if (name.length <= 2) {
-    return email; // Don't mask very short names
-  }
-  const maskedName = name.substring(0, 2) + '*'.repeat(name.length - 2);
-  return `${maskedName}@${domain}`;
-};
+
+  const maskEmail = (email) => {
+    if (!email || email.length < 3) return email;
+    const [name, domain] = email.split('@');
+    if (name.length <= 2) {
+      return email; // Don't mask very short names
+    }
+    const maskedName = name.substring(0, 2) + '*'.repeat(name.length - 2);
+    return `${maskedName}@${domain}`;
+  };
+
   // Fetch leaderboard data
   const fetchLeaderboard = async () => {
-  try {
-    const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard');
-    const data = await response.json();
-    setLeaderboardData(data);
-  } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-  }
-};
+    try {
+      setLoading(true);
+      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/leaderboard');
+      const data = await response.json();
+      setLeaderboardData(data);
+      setLastFetch(Date.now());
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Initial fetch
   useEffect(() => {
@@ -60,11 +66,11 @@ const maskEmail = (email) => {
     }
 
     try {
-        const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ passcode: password })
-});
+      const response = await fetch('https://scamboteducationplatform-production-c988.up.railway.app/api/chatbot/reset-leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode: password })
+      });
 
       if (response.ok) {
         alert('Leaderboard reset successfully!');
@@ -93,7 +99,7 @@ const maskEmail = (email) => {
             onClick={handleReset}
             className="text-xs bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
           >
-            Reset
+            Reset (Admin)
           </button>
         </div>
       </div>
@@ -102,42 +108,48 @@ const maskEmail = (email) => {
         <div className="p-4 text-center">Loading...</div>
       ) : (
         <div>
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-3 text-left">Rank</th>
-                <th className="py-2 px-3 text-left">Player</th>
-                <th className="py-2 px-3 text-left">Email</th>
-                <th className="py-2 px-3 text-right">Score</th>
-                <th className="py-2 px-3 text-right">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboardData.map((entry, index) => (
-                <tr key={entry.email} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="py-2 px-3">{index + 1}</td>
-                  <td className="py-2 px-3">
-                    {entry.gameName} 
-                    <span className="text-gray-500 text-xs ml-1">
-                      ({entry.totalAttempts})
-                    </span>
-                  </td>
-                  <td className="py-2 px-3 text-gray-600 text-xs">{maskEmail(entry.email)}</td>
-                  <td className="py-2 px-3 text-right font-semibold">{entry.score.toFixed(2)}</td>
-                  <td className="py-2 px-3 text-right">{formatTime(entry.completionTime)}</td>
-                </tr>
-              ))}
-              {leaderboardData.length === 0 && (
+          {/* Mobile: Horizontal scrolling table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[600px]">
+              <thead className="bg-gray-100">
                 <tr>
-                  <td colSpan="5" className="py-4 text-center text-gray-500">
-                    No entries yet. Be the first to complete the challenge!
-                  </td>
+                  <th className="py-2 px-3 text-left min-w-[60px]">Rank</th>
+                  <th className="py-2 px-3 text-left min-w-[120px]">Player</th>
+                  <th className="py-2 px-3 text-left min-w-[180px]">Email</th>
+                  <th className="py-2 px-3 text-right min-w-[80px]">Score</th>
+                  <th className="py-2 px-3 text-right min-w-[80px]">Time</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {leaderboardData.map((entry, index) => (
+                  <tr key={entry.email} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="py-2 px-3">{index + 1}</td>
+                    <td className="py-2 px-3">
+                      {entry.gameName} 
+                      <span className="text-gray-500 text-xs ml-1">
+                        ({entry.totalAttempts})
+                      </span>
+                    </td>
+                    <td className="py-2 px-3 text-gray-600 text-xs">{maskEmail(entry.email)}</td>
+                    <td className="py-2 px-3 text-right font-semibold">{entry.score.toFixed(2)}</td>
+                    <td className="py-2 px-3 text-right">{formatTime(entry.completionTime)}</td>
+                  </tr>
+                ))}
+                {leaderboardData.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="py-4 text-center text-gray-500">
+                      No entries yet. Be the first to complete the challenge!
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
           <div className="p-2 bg-gray-50 text-xs text-gray-500 text-center">
             Auto-refreshes every 5 seconds • Last updated: {new Date(lastFetch).toLocaleTimeString()}
+            <div className="mt-1 text-xs text-blue-600">
+              📱 On mobile: Swipe left/right to see all columns
+            </div>
           </div>
         </div>
       )}
@@ -145,8 +157,4 @@ const maskEmail = (email) => {
   );
 };
 
-
 export default Leaderboard;
-
-
-
