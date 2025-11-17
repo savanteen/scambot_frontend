@@ -39,7 +39,8 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
     travel: false,
     soccer: false,
     politics: false,
-    infoSource: false
+    infoSource: false,
+    transitionSaid: false
   });
   
   const messagesEndRef = useRef(null);
@@ -60,7 +61,8 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
     guarantee_made: {
       positive: ['10% monthly', '15% monthly', '20% monthly', '25% monthly', '10-15% returns', '15-20% returns',
                 'reasonable returns', 'competitive returns', 'guaranteed returns', 'expected returns',
-                '% annual', '% yearly', '% per year', 'annual returns', 'yearly returns']
+                '% annual', '% yearly', '% per year', 'annual returns', 'yearly returns',
+                '10% per month', '200% per year']
     },
     skepticism_deflected: {
       positive: ['understand your concern', 'legitimate question', 'good point you raise', 
@@ -118,6 +120,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       "I'm definitely considering this opportunity. What do I have to do?",
       "You've addressed my concerns well. How soon do you need a decision?",
       "I appreciate your thoroughness. Would $100 be enough to start with?",
+      "You make some good points. Shall I share this with my wife?",
       "I'm nearly ready to proceed. What details do you need from me again?"
     ],
     pressureTactics: [
@@ -320,7 +323,8 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
         travel: false,
         soccer: false,
         politics: false,
-        infoSource: false
+        infoSource: false,
+        transitionSaid: false
       });
       
       setDimensions({
@@ -399,20 +403,8 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       return "Wait, before I commit to this... Just to confirm - are you really regulated by the financial authorities?";
     }
 
-    // Before final phase, guide players on incomplete dimensions
-    const currentScore = calculateScore();
-    if (currentScore >= 80 && currentScore < 98) {
-      const guidingQuestion = getGuidingQuestion();
-      if (guidingQuestion) {
-        return guidingQuestion;
-      }
-    }
-    
-    // Regular game responses with simple rapport building questions
-    const completeDimensions = Object.values(dimensions).filter(v => v >= 100).length;
-    
-    // Add rapport questions if not at 100%
-    if (dimensions.rapport_built < 100 && Math.random() < 0.3) {
+    // Early rapport building phase - PRIORITY at beginning
+    if (dimensions.rapport_built < 100 && analytics.messagesCount < 8) {
       const availableQuestions = [];
       
       if (!usedRapportQuestions.children) availableQuestions.push(0);
@@ -425,6 +417,24 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
         return botPersonality.rapportQuestions[randomIndex];
       }
     }
+
+    // When rapport hits 100%, trigger transition message
+    if (dimensions.rapport_built >= 100 && !usedRapportQuestions.transitionSaid) {
+      setUsedRapportQuestions(prev => ({ ...prev, transitionSaid: true }));
+      return "Now I understand you better and I see that we are really similar! Let's talk about the investment opportunity, shall we?";
+    }
+
+    // Before final phase, guide players on incomplete dimensions
+    const currentScore = calculateScore();
+    if (currentScore >= 80 && currentScore < 98) {
+      const guidingQuestion = getGuidingQuestion();
+      if (guidingQuestion) {
+        return guidingQuestion;
+      }
+    }
+    
+    // Regular game responses
+    const completeDimensions = Object.values(dimensions).filter(v => v >= 100).length;
     
     if (completeDimensions >= 5 || timeLeft <= 30) {
       return botPersonality.pressureTactics[Math.floor(Math.random() * botPersonality.pressureTactics.length)];
@@ -466,7 +476,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       dimensionUpdated = true;
     }
 
-    // Process rapport building with simple keywords
+    // Process rapport building with simple keywords - RAPPORT NEVER DECREASES
     if (newDimensions.rapport_built < 100) {
       // Greetings - can be used multiple times
       if (lowerCaseMessage.includes('how are you') || lowerCaseMessage.includes('and you')) {
@@ -548,7 +558,7 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
       }
     });
     
-    // If no specific patterns matched, give 3% boost to random non-100% dimension
+    // If no specific patterns matched, give 3% boost to random non-100% dimension (but NEVER decrease rapport)
     if (!dimensionUpdated) {
       const availableDimensions = Object.keys(newDimensions).filter(dim => newDimensions[dim] < 100);
       if (availableDimensions.length > 0) {
@@ -729,8 +739,8 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
         </div>
         
         {gameStarted ? (
-          <div className="flex flex-col h-96">
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-100 flex flex-col">
+          <div className="flex flex-col h-96 relative">
+            <div className="flex-1 overflow-y-auto p-4 bg-gray-100 flex flex-col pb-safe">
               {messages.map((msg, index) => (
                 <div 
                   key={index} 
@@ -749,23 +759,26 @@ const ChatInterface = ({ userId, userEmail, userObj }) => {
               <div ref={messagesEndRef} />
             </div>
             
-            <form onSubmit={handleSubmit} className="p-3 border-t flex">
-              <input 
-                type="text" 
-                value={newMessage} 
-                onChange={(e) => setNewMessage(e.target.value)} 
-                className="flex-1 border rounded-l px-3 py-2" 
-                placeholder="Type your message..." 
-                disabled={loading || gameCompleted}
-              />
-              <button 
-                type="submit" 
-                className="bg-blue-500 text-white rounded-r px-4 py-2 hover:bg-blue-600"
-                disabled={loading || gameCompleted}
-              >
-                {loading ? '...' : 'Send'}
-              </button>
-            </form>
+            {/* Fixed input bar at bottom */}
+            <div className="sticky bottom-0 bg-white border-t">
+              <form onSubmit={handleSubmit} className="p-3 flex">
+                <input 
+                  type="text" 
+                  value={newMessage} 
+                  onChange={(e) => setNewMessage(e.target.value)} 
+                  className="flex-1 border rounded-l px-3 py-2" 
+                  placeholder="Type your message..." 
+                  disabled={loading || gameCompleted}
+                />
+                <button 
+                  type="submit" 
+                  className="bg-blue-500 text-white rounded-r px-4 py-2 hover:bg-blue-600"
+                  disabled={loading || gameCompleted}
+                >
+                  {loading ? '...' : 'Send'}
+                </button>
+              </form>
+            </div>
           </div>
         ) : (
           <div className="p-8 text-center">
